@@ -18,7 +18,8 @@ import com.simulator.DTO.StockDTO;
 @Controller
 public class SimulatorController {
 	
-	
+	dashin.cputil.ICpCybos cpCybos= dashin.cputil.ClassFactory.createCpCybos(); //연결객체 
+	dashin.cpsysdib.ISysDib stockChart = dashin.cpsysdib.ClassFactory.createStockChart(); //차트정보객체
 	
 	@RequestMapping(value = "/test1", method = RequestMethod.GET)
 	public String test1(Locale locale, Model model) {
@@ -37,12 +38,12 @@ public class SimulatorController {
 	
 	@RequestMapping(value = "/StockIndex", method = RequestMethod.GET)
 	public String StockIndex(Locale locale, Model model) {
-		dashin.cputil.ICpCybos cpCybos= dashin.cputil.ClassFactory.createCpCybos();
+		//dashin.cputil.ICpCybos cpCybos= dashin.cputil.ClassFactory.createCpCybos();
 		
 		if(cpCybos.isConnect()!=1) {
-			System.out.println("연결되지않음");
+			//System.out.println("연결되지않음");
 		}else {
-			System.out.println("연결됨");
+			//System.out.println("연결됨");
 		}
 		
 		//ICpCybos
@@ -70,10 +71,11 @@ public class SimulatorController {
 		System.out.println("테스트끝------------");
 		*/
 		
-		dashin.cpsysdib.ISysDib stockChart = dashin.cpsysdib.ClassFactory.createStockChart();  //차트정보객체
+		//dashin.cpsysdib.ISysDib stockChart = dashin.cpsysdib.ClassFactory.createStockChart();  //차트정보객체
 		
 
 		//요청할 데이터 정보를 셋팅
+		/*
 		stockChart.setInputValue(0, "A005930"); //종목코드
 		stockChart.setInputValue(1, 49); //ASCII CODE 49 = '1' (기간으로 요청)
 		stockChart.setInputValue(2, 20101230); //요청종료일
@@ -81,10 +83,11 @@ public class SimulatorController {
 		stockChart.setInputValue(5, new int[] {0,1,2,3,4,5,8,18,19}); //요청항목 (API 확인바람)
 		stockChart.setInputValue(6, 68); //ASCII CODE 68 = 'D' (일봉 요청)
 		stockChart.setInputValue(9, 49); //ASCII CODE 49 = '1' (수정주가)
-
+		*/
 
 
 		//리퀘스트 수 제한에 걸린 경우 제한 시간만큼 대기
+		/*
 		int remainTime = cpCybos.limitRequestRemainTime();
 		int remainCount = cpCybos.getLimitRemainCount(dashin.cputil.LIMIT_TYPE.LT_NONTRADE_REQUEST);
 
@@ -95,21 +98,21 @@ public class SimulatorController {
 		        System.out.println("??");
 		    }
 		}
-
+		*/
 		//요청
-		stockChart.blockRequest();
+		//stockChart.blockRequest();
 
 
 
 		//수신
-		int tot = (Integer) stockChart.getHeaderValue(3); //수신한 데이터 갯수
+		//int tot = (Integer) stockChart.getHeaderValue(3); //수신한 데이터 갯수
 
-		int date1= Integer.parseInt(stockChart.getDataValue(0, 0).toString()); //수신한 0번째 데이터의 0번항목(날짜)
-		int closePrice = (Integer) stockChart.getDataValue(5, 0); //수신한 0번째 데이터의 5번 항목
+		//int date1= Integer.parseInt(stockChart.getDataValue(0, 0).toString()); //수신한 0번째 데이터의 0번항목(날짜)
+		//int closePrice = (Integer) stockChart.getDataValue(5, 0); //수신한 0번째 데이터의 5번 항목
 		
-		System.out.println(tot);
-		System.out.println(date1);
-		System.out.println(closePrice);
+		//System.out.println(tot);
+		//System.out.println(date1);
+		//System.out.println(closePrice);
 		
 		stockChart.setInputValue(0, "A005930"); //종목코드
 		stockChart.setInputValue(1, 49); //ASCII CODE 49 = '1' (기간으로 요청)
@@ -121,14 +124,14 @@ public class SimulatorController {
 		stockChart.blockRequest();
 		
 		//수신
-		tot = (Integer) stockChart.getHeaderValue(3); //수신한 데이터 갯수
+		int tot = (Integer) stockChart.getHeaderValue(3); //수신한 데이터 갯수
 
-		date1= Integer.parseInt(stockChart.getDataValue(0, 0).toString()); //수신한 0번째 데이터의 0번항목(날짜)
-		closePrice = (Integer) stockChart.getDataValue(5, 0); //수신한 0번째 데이터의 5번 항목
-		System.out.println("구분");
-		System.out.println(tot);
-		System.out.println(date1);
-		System.out.println(closePrice);
+		int date1= Integer.parseInt(stockChart.getDataValue(0, 0).toString()); //수신한 0번째 데이터의 0번항목(날짜)
+		int closePrice = (Integer) stockChart.getDataValue(5, 0); //수신한 0번째 데이터의 5번 항목
+		//System.out.println("구분");
+		//System.out.println(tot);
+		//System.out.println(date1);
+		//System.out.println(closePrice);
 		
 		model.addAttribute("curDay", date1);
 		model.addAttribute("curPrice",closePrice);
@@ -147,41 +150,55 @@ public class SimulatorController {
 	@ResponseBody
 	public HashMap<Integer, String> StockIndex2(Locale locale, Model model,HttpServletResponse response) {
 		
-		System.out.println("호출됨??");
-		dashin.cputil.ICpCybos cpCybos= dashin.cputil.ClassFactory.createCpCybos();  //연결객체생성
+		System.out.println("타임체커 Before");
+		timeChecker();
+		
+		 
+		//dashin.cputil.ICpCybos cpCybos= dashin.cputil.ClassFactory.createCpCybos();  //연결객체생성
 		
 		if(cpCybos.isConnect()!=1) {
-			System.out.println("연결되지않z음");
+			System.out.println("cybos 연결되지않음");
 		}else {
-			System.out.println("연결됨");
+			System.out.println("cybos 연결됨");
 		}
 		
-		dashin.cpsysdib.ISysDib stockChart = dashin.cpsysdib.ClassFactory.createStockChart(); //차트정보객체
+		//dashin.cpsysdib.ISysDib stockChart = dashin.cpsysdib.ClassFactory.createStockChart(); //차트정보객체
 		
 		//요청할 데이터 정보를 셋팅
 		stockChart.setInputValue(0, "A005930"); //종목코드
 		stockChart.setInputValue(1, 49); //ASCII CODE 49 = '1' (기간으로 요청)
-		stockChart.setInputValue(2, 20220603); //요청종료일
-		stockChart.setInputValue(3, 20220430); //요청***시작****일
+		stockChart.setInputValue(2, 20101230); //요청종료일
+		stockChart.setInputValue(3, 20000101); //요청***시작****일
 		stockChart.setInputValue(5, new int[] {0,1,2,3,4,5,8,18,19}); //요청항목 (API 확인바람)
 		stockChart.setInputValue(6, 68); //ASCII CODE 68 = 'D' (일봉 요청)
 		stockChart.setInputValue(9, 49); //ASCII CODE 49 = '1' (수정주가)
 		stockChart.blockRequest();
+		
+		
+		System.out.println("타임체커 After");
+		timeChecker();
 		
 		System.out.println(stockChart.getHeaderValue(3).toString());
 		System.out.println(stockChart.getHeaderValue(1).toString());
 		 
 		int numData=Integer.parseInt((stockChart.getHeaderValue(3).toString()));
 		int numField=Integer.parseInt((stockChart.getHeaderValue(1).toString()));
-				 
+		
 		System.out.println(numData);
 		System.out.println(numField);
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
-		 
+		int checkMax=0;
+		int checkMin=9999999;
 		for(int i=0; i<numData; i++) {
 			for(int j=0; j<numField; j++) {
-				//System.out.print("i는 "+i+" j 는 "+j+"//");
+				System.out.print("i는 "+i+" j 는 "+j+"//");
 				System.out.print(stockChart.getDataValue(j,i)+"  ");
+				if(Integer.parseInt(stockChart.getDataValue(5,i).toString())>checkMax) {
+					checkMax=Integer.parseInt(stockChart.getDataValue(5,i).toString());
+				}
+				if(Integer.parseInt(stockChart.getDataValue(5,i).toString())  < checkMin) {
+					checkMin=Integer.parseInt(stockChart.getDataValue(5,i).toString());
+				}
 			} 
 			System.out.println("========");
 		}
@@ -190,9 +207,7 @@ public class SimulatorController {
 			map.put(Integer.parseInt(stockChart.getDataValue(0,i).toString()) , stockChart.getDataValue(5,i).toString()); //날짜가 key 종가가 value
 		}
 	
-		Integer maxKey = Collections.max(map.keySet());
-		Integer minKey = Collections.min(map.keySet());
-		
+	 
 		/*
 		 20220603  0  67200  67300  66800  66800  8222883  20220603  100.0  ========
 20220602  0  66600  67000  66400  66700  14959443  20220602  100.0  ========
@@ -204,12 +219,12 @@ public class SimulatorController {
 		
 		
 		Entry<Integer, String> maxEntry = Collections.max(map.entrySet(), comparator);
-		// Min Value의 key, value
 		Entry<Integer, String> minEntry = Collections.min(map.entrySet(), comparator); 
 		
+		System.out.println(maxEntry.getKey() + "@최대@ : " + maxEntry.getValue());  	//최대
+		System.out.println(minEntry.getKey() + "@최소@ : " + minEntry.getValue());	//최소
 		
-		 System.out.println(maxEntry.getKey() + " : " + maxEntry.getValue());  
-		 System.out.println(minEntry.getKey() + " : " + minEntry.getValue());
+		System.out.println("max / min ==> "+checkMax+" ## "+checkMin);
 		
 		//1,2 =>최대키값,벨류  3,4 =>최소키값,벨류
 		map.put(1,maxEntry.getKey().toString());
@@ -221,6 +236,31 @@ public class SimulatorController {
 		 
 		
 		return map;
+	}
+	
+	public void timeChecker() {
+		//dashin.cputil.LIMIT_TYPE값 0: 주문,계좌고나련 1: 시세요청 관련 2 실시간요청관련
+		int remainCount = cpCybos.getLimitRemainCount(dashin.cputil.LIMIT_TYPE.LT_NONTRADE_REQUEST);
+		
+		System.out.println("남은 조회 가능 횟수: " + remainCount);
+		int remainTime=cpCybos.limitRequestRemainTime()+200; //ms단위 일듯?, 안전을위해 200ms추가 
+		if (remainCount <10) {
+			
+			System.out.println("조회 가능 횟수가 10미만이니 "+remainTime+"ms 대기");
+			try {
+				 
+				Thread.sleep(remainTime);
+				System.out.println("TIME CHECKER TRY SUCCESS, "+remainTime+"ms waited");
+			} catch (InterruptedException e) {
+				 
+				e.printStackTrace();
+				System.out.println("TIME CHECKER EXCEPTION");
+			}
+			
+			
+		}
+		
+		
 	}
 	
  
