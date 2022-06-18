@@ -20,85 +20,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
           <script type="text/javascript" language="javascript">
-/* 
-	$(document).ready(function(){
-		
-		 $("#div123").on("click",function(){      
-			$.ajax({
-				
-				type : "GET",
-				url : "/getSingleStock.po",
-				//url : contextPath + '/drilldown/kill.po',
-				dataType : "text",
-				error : function(why){
-					 
-					console.log(why);
-					alert('통신실패!!');
-				},
-				success : function(data){
-					 
-					//console.log(${path})
-				    console.log(typeof(data)+"데이터타입");
-					alert("통신데이터 값 : " + data) ;
-					console.log(data);
-					const obj123=JSON.parse(data)
-					console.log(obj123)
-					console.log(typeof(obj123));
-					console.log(data.length);
-					console.log(labels);
-					labels=[]
-					labels=Object.keys(obj123);
-					console.log("===zz=====")
-					testObj=Object.values(obj123);
-					console.log(labels);
-					console.log("========")
-					console.log(testObj);
-					console.log("00000000000")
-					console.log(chartData)
-					console.log("111111111")
-					console.log(chartData.data)
-					console.log("2222")
-					chartData.data=Object.values(obj123);
-					console.log("333")
-					console.log(chartData.data)
-					console.log("4444444")
-					console.log(chartData)
-					chartData.labels=labels;
-					
-				 
-					  var chartDataz = {
-					    labels: labels,
-					    datasets: [{
-					      label:  Object.values(obj123),
-					      backgroundColor: 'rgb(255, 99, 132)',
-					      borderColor: 'rgb(255, 99, 132)',
-					      data: Object.values(obj123),
-					      fill:false,
-					    }]
-					  };
 
-					  var chartConfig = {
-					    type: 'line',
-					    data: chartDataz,
-					    options: {}
-					  };
-					  
-					  var myChart = new Chart(
-							    document.getElementById('myChart'),
-							    chartConfig
-							  );
-					 
-				}
-				
-			});
-		 });
-			 
- 
-	 
-		
-
-	});
-	*/
 
 </script>
     </head>
@@ -248,9 +170,14 @@
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-area me-1"></i>
-                                        Area Chart Example
+                                           	멀티셀렉트 주식 
                                     </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                    <div class="card-body"> 
+                                    	 <input id="userId" value="cc2" type="hidden">userid</input>
+                                    	 <input name="hobby" value="A005930" type="checkbox">삼성전자</input>
+                                    	 <input name="hobby" value="A373220" type="checkbox">에너지솔루션</input>
+                                    	 <input name="hobby" value="A000660" type="checkbox">하이닉스</input>
+                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-6">
@@ -291,8 +218,11 @@
 					<div style="background-color:yellow;" id='div123'> 
 					<input type="button" id="button1" onclick="abcd();" value="버튼1" />
 					</div>
-					<div style="background-color:yellow;" id='div1234'> 
-					<input type="button" id="button1" onclick="abcd();" value="버튼1" />
+					<div style="background-color:red;" id='multiDiv123'> 
+					<input type="button" id="button2" onclick="abcd();" value="버튼2" />
+					</div>
+					<div style="background-color:blue;" id='div123456'> 
+					<input type="button" id="button3" onclick="ajaxExample();" value="chekcboxArr버튼3" />
 					</div>
 					<div>
 					뜸?? ${minValue}
@@ -335,6 +265,113 @@
 		    chartConfig
 		  );
 	myChart.destroy();
+	
+	
+	function ajaxExample() {
+	    // 사용자 ID를 갖고 온다.
+	    var userId = $("#userId").val();
+	    // name이 같은 체크박스의 값들을 배열에 담는다.
+	    var checkboxValues = [];
+	    $("input[name='hobby']:checked").each(function (i) {
+	        checkboxValues.push($(this).val());
+	    });
+	    // 사용자 ID(문자열)와 체크박스 값들(배열)을 name/value 형태로 담는다.
+	    var allData = {
+	        "userId": userId,
+	        "checkArray": checkboxValues
+	    };
+	    console.log(allData);
+	    //JSON.stringify(obj)
+	    $.ajax({
+	        url: "multiStock.po",
+	        type: 'POST',
+	       // data: {
+	         //   data: JSON.stringify(allData)
+	          //},
+		    contentType:'application/json',
+		    data: JSON.stringify(checkboxValues),
+		  
+		    	
+	        
+	        success: function (data) {
+	            alert("완료!");
+	            alert("멀티스톡성공");
+				console.log("전");
+				//myChart.destroy();
+				if( window.lineChart != undefined){
+					alert("지우고생성");
+	                window.lineChart.destroy();
+	            }
+				console.log(data);
+				
+				//var Obj_JSON_MULTI=JSON.parse(data)
+				var Obj_JSON_MULTI=data;
+				console.log("후")
+				console.log(Obj_JSON_MULTI)
+				console.log("후")
+				var multiMaxKey=Obj_JSON_MULTI["1"];
+				var multiMaxValue=Obj_JSON_MULTI["2"];
+				var multiMinKey=Obj_JSON_MULTI["3"];
+				var multiMinValue=Obj_JSON_MULTI["4"];
+				console.log("z23232323z")
+				console.log(multiMaxKey,multiMaxValue,multiMinKey,multiMinValue);
+				
+				delete Obj_JSON_MULTI["1"]; //최대키값,벨류,최소키값,벨류제거
+				delete Obj_JSON_MULTI["2"];
+				delete Obj_JSON_MULTI["3"];
+				delete Obj_JSON_MULTI["4"];
+				$("#maxSpanArea").text("날짜 :"+multiMaxKey+" 주가 : "+multiMaxValue)
+				$("#minSpanArea").text("날짜 :"+multiMinKey+" 주가 : "+multiMinValue)
+				
+				//console.log("널11")
+				//document.getElementById('myChart')=null
+				//console.log("널22")
+			 
+				  var chartDataz = {
+				    labels:  Object.keys(Obj_JSON_MULTI),
+				    datasets: [{
+				      label:  "멀티스톡 주가 추이",
+				      backgroundColor: 'rgb(255, 99, 132)',
+				      borderColor: 'rgb(255, 99, 132)',
+				      data: Object.values(Obj_JSON_MULTI),
+				      fill:false,
+				    }]
+				  };
+
+				  var chartConfig = {
+				    type: 'line',
+				    data: chartDataz,
+				    options: {}
+				  };
+				  if(document.getElementById('myChart') != null){
+					  //maxSpanArea
+					  
+					  var myChart = new Chart(
+							    document.getElementById('myChart'),
+							    chartConfig
+					  );
+					  myChart.destroy();
+				  }
+			 
+				  console.log("디스ㅡㅌ로이");
+				  myChart.destroy();
+				  console.log("디스ㅡㅌ로이");
+				  var myChart = new Chart(
+						    document.getElementById('myChart'),
+						    chartConfig
+						  );
+				  console.log("디스ㅡㅌ로이후");
+				  
+				  
+			 
+	          
+	        },
+	        error: function (jqXHR, textStatus, errorThrown) {
+	            alert("에러 발생~~ \n" + textStatus + " : " + errorThrown);
+	            self.close();
+	        }
+	    });
+	}
 	
 </script>
 
